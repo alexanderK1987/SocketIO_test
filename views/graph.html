@@ -1,6 +1,7 @@
 <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
 <script type="text/javascript" charset="utf-8">
+  var cnt = 0;
   $(document).ready(function() {
     var socket = io.connect('http://' + document.domain + ':' + location.port);
 
@@ -9,14 +10,22 @@
     socket.on('mqtt_message', function(data) {
       console.log(data);
       data['payload'] = data['payload'].replace(/(?:\r\n|\r|\n)/g, '<br />');
-      var text = '<tr style="border-top: dashed 1px gray;"><td>' + data['topic'] + '</td><td>' + data['qos'] + '</td><td>' + data['payload'] + '</td></tr>';
+      var text = '<tr id="row-' + cnt + '">' +
+                 '<td>' + cnt + '</td>' + 
+                 '<td>' + data['topic'] + '</td>' + 
+                 '<td>' + data['qos'] + '</td>' + 
+                 '<td>' + data['payload'] + '</td></tr>';
       $('#subscribe_messages').append(text);
+      cnt = cnt + 1;
+      if (cnt >= 40) {
+         document.getElementById("row-"+ (cnt-40)).remove();
+      }
     })
   });
 </script>
 <table id="subscribe_messages" style="width: 100%; border: solid 1px gray; font-family: monospace;">
     <tr>
-        <th>Topic</th><th>QOS</th><th>Message</th>
+        <th>no.</th><th>Topic</th><th>QOS</th><th>Message</th>
     </tr>
 </table>
 <!-- <div id="subscribe_messages"></div> -->
